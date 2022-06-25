@@ -73,7 +73,6 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 				let player2 = await this.liveGameServ.getGameByPlayer(sender_id[0].userName)
 				if (typeof player2 != "undefined" && Object.keys(player2).length > 0)
 				{
-					console.log("test")
 					var game : GamesDto = new(GamesDto)
 					game.winner_user = player2
 					game.loser_user = sender_id[0].userName
@@ -180,7 +179,6 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 				data.senderId = sender_id[0].userName
 				data.reciverId = text[1]
 				data.time = new Date()
-				console.log(data.time)
 				await this.messageServ.createMessage(data)
 				var conversation : messageDto = await this.messageServ.getConversation(data.senderId,data.reciverId);
 				var senderSock : Socket[] = [];
@@ -297,7 +295,6 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 					var player2 : Socket[] = [];
 					player1 = sockets.get(liveGame[0].player1);
 					player2 = sockets.get(liveGame[0].player2);
-					console.log("herre")
 					this.gamePlaysServ.movingPaddles(playersStat,userInfo[0].userName,body, player1, player2, liveGame)
 				}
 			}
@@ -320,12 +317,10 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 				where: { userName: userInfo[0].userName }
 				});
 				let rooms : any = test[0].chatRooms;
-				console.log(test)
 				if(rooms.length !== 0)
 				{
 					for(let room of rooms)
 					{
-						console.log(userInfo[0].userName)
 						client.join(room.id.toString())
 					}
 				}
@@ -347,7 +342,6 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 			if(Object.keys(userInfo).length !== 0)
 			{
 				let room : any = await this.chatRoomServ.createRoom(userInfo[0].userName,data)
-				console.log(room)
 				let sock : Socket[] = []
 				let users : Array<any> = data.users
 				sock = sockets.get(userInfo[0].userName)
@@ -420,7 +414,6 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 					})
 
 				}
-				console.log(await this.chatRoomServ.getRoomById(data.roomId))
 			}
 		}
 		console.log("--------------------------------")
@@ -446,7 +439,6 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 				this.notifServ.saveNotification(data,userInfo[0].userName)
 				for(let sock of recvSockts)
 				{
-					console.log(sock.id)
 					sock.emit("notification", {senderName : userInfo[0].userName , type : data.type})
 				}
 			}
@@ -456,51 +448,3 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 
 
 }
-// @SubscribeMessage('typing')
-// async sendTyping(client: Socket, body: any)
-// {
-// 	console.log("--------typingMessages-------------")
-// 	let auth_token = client.handshake.auth.Authorization;
-// 	if(auth_token !== "null" && auth_token !== "undefined" && auth_token)
-// 	{
-// 		const tokenInfo : any = this.jwtService.decode(auth_token);
-// 		let userInfo = await this.usersRepository.query(`select "userName" from public."Users" WHERE public."Users".email = '${tokenInfo.userId}'`);
-// 		if(Object.keys(userInfo).length !== 0)
-// 		{
-// 			let sock = sockets.get(body[0])
-// 			if(sock !== undefined)
-// 			{
-// 				if(body[1] !== '')
-// 				{
-// 					for(let ids of sock)
-// 					{
-// 						console.log("is emiting true to " ,ids.id)
-// 						ids.emit("typing",true)
-// 					}
-// 				}
-// 				else
-// 				{
-// 					for(let ids of sock)
-// 					{
-// 						console.log("is emiting false to " ,ids.id)
-// 						ids.emit("typing",false)
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// 	console.log("--------------------------")
-
-// }
-/*SELECT "userName" from public."Users" Where "userName"
-IN
-(select "reciverId"
-	FROM public."messages" WHERE "senderId" = 'mel-hamr') 
- OR "userName" IN (select "senderId"
-	FROM public."messages" WHERE "reciverId" = 'mel-hamr') */
-
-	/*
-		messages : [
-			1: {messge: ,userName: ,dateTime:}
-		]
-	*/

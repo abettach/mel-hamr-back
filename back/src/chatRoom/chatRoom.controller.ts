@@ -77,7 +77,22 @@ export class chatRoomController {
 	@UseGuards(JwtAuthGuard)
 	async getRoomMembers(@Body() body :any)
 	{
-		return await (await this.RoomService.getRoomById(body.roomId)).members
+		let room : any = (await this.RoomService.getRoomById(body.roomId))
+		
+		let members : any =room.members
+		return  members
+	}
+	@Post('changeOwner')
+	@UseGuards(JwtAuthGuard)
+	async changeOwner(@Body() body :any)
+	{
+		this.RoomService.changeOwner(body.roomId , body.newOwner)
+	}
+	@Post('getOwner')
+	@UseGuards(JwtAuthGuard)
+	async getOwner(@Body() body :any)
+	{
+		return  (await this.RoomService.getRoomById(body.roomId)).RoomOwner;
 	}
 }
 /* 

@@ -40,15 +40,14 @@ export class chatRoomService
 		return await this.RoomRepository.save(room)
 	}
 
-	async getRoomById(gameId : number )
+	async getRoomById(roomId : number )
 	{
-		console.log("here")
-		let game = await this.RoomRepository
+		let room = await this.RoomRepository
 		.createQueryBuilder("chat")
-		.leftJoinAndSelect("chat.members", "Users").where('chat.id = :id', { id: gameId })
+		.leftJoinAndSelect("chat.members", "Users").where('chat.id = :id', { id: roomId })
 		.getOne();
 
-		return game
+		return room
 
 	}
 
@@ -81,5 +80,12 @@ export class chatRoomService
 
 
 		return { public : PbRoom , private : PrRoom};
+	}
+	async changeOwner(roomId : number , newOwner : any)
+	{
+		let room : chatRoom = await this.getRoomById(roomId)
+		room.RoomOwner = newOwner 
+		console.log(room);
+		await room.save()
 	}
 }

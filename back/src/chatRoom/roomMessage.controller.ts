@@ -12,6 +12,7 @@ import { chatRoom } from "src/entities/chatRoom.entity";
 import { connect } from "http2";
 import { roomMessage } from "src/entities/roomMessage.entity";
 import { roomMessageService } from "./roomMessage.service";
+import { uDto } from "src/messages/message.controller";
 
 
 @Controller('roomMessage')
@@ -28,13 +29,24 @@ export class roomMessageController {
 		let rMessage = await this.roomMessageRep.save(data)
 		return  rMessage
 	}
+
+	// @Post('getConnversation')
+	// async getRoomMessages(roomId : any)
+	// {
+	// 	console.log("RoomId=",roomId);
+	// 	// console.log(await this.RoomService.getRoomMessages(roomId))
+	// 	return await this.RoomService.getRoomMessages(roomId)
+	// }
 	@Post('getConnversation')
-	@UsePipes(ValidationPipe)
 	@UseGuards(JwtAuthGuard)
-	async getRoomMessages(data : any)
+	async getConv (@Body() roomId : any, @Req() request: Request ) 
 	{
-		let rMessages = await this.roomMessageRep.findBy({roomId : data})
-		return (rMessages)
+		const jwt = request.headers.authorization.replace('Bearer ', '');
+		const tokenInfo : any = this.jwtService.decode(jwt);
+		console.log("RoomId=",roomId.roomId);
+
+		let conv : any = await  this.RoomService.getRoomMessages(roomId.roomId);
+		return conv
 	}
 }
 /* 
