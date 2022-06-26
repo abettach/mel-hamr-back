@@ -85,26 +85,34 @@ export class chatRoomService
 	{
 		let room : chatRoom = await this.getRoomById(roomId)
 		room.RoomOwner = newOwner 
-		console.log(room);
+		// console.log(room);
 		await room.save()
 	}
 
 	async deleteUser(roomId : number, userToDelete : string)
 	{
-		let room : any = this.getRoomById(roomId)
+		let room : any = await this.getRoomById(roomId)
 		let i : number = 0
 		let index : number = -1
 		if(room)
 		{
+			// console.log(room.members)
 			room.members?.map(async (e:any) => {
 				if(e.userName === userToDelete)
 				{
-					console.log("im hrere")
 					index = i
 				}
 				i++
 			})
-			console.log("here is index " , index)
+			if(index !== -1)
+			{
+				if(room.members[index].userName === room.RoomOwner) 
+					room.RoomOwner = room.members[0].userName
+				room.members.splice(index,1)
+			}
+			console.log("=========================\n===============")
+			console.log(room.members)
+			await room.save()
 		}
 	}
 }
