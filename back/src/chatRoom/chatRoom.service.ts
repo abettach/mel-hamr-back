@@ -88,4 +88,23 @@ export class chatRoomService
 		console.log(room);
 		await room.save()
 	}
+
+	async deleteUser(roomId : number, userToDelete : string)
+	{
+		let room : any = this.getRoomById(roomId)
+		let i : number = 0
+		let index : number = -1
+		if(room)
+		{
+			room.members?.map(async (e:any) => {
+				if(e.userName === userToDelete)
+				{
+					console.log("im hrere")
+					index = i
+				}
+				i++
+			})
+			console.log("here is index " , index)
+		}
+	}
 }

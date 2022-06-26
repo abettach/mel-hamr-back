@@ -94,10 +94,17 @@ export class chatRoomController {
 	{
 		return  (await this.RoomService.getRoomById(body.roomId)).RoomOwner;
 	}
+
+	@Post('deleteUser')
+	@UseGuards(JwtAuthGuard)
+	async deleteUser(@Body() body :any)
+	{
+		this.RoomService.deleteUser(body.roomId , body.user)
+	}
 }
 /* 
 SELECT *
 FROM subject
 JOIN subject_note AS jt on jt.subject_id = subject.id
 WHERE jt.note_id = :id 
-*/
+*/	
