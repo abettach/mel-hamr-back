@@ -6,12 +6,16 @@ import { Repository } from "typeorm";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "src/entities/user.entity";
 import { UserService } from "src/user/user.service";
+import { roomMessage } from "src/entities/roomMessage.entity";
+import { messageService } from "src/messages/message.service";
+import { roomMessageService } from "./roomMessage.service";
 @Injectable()
 export class chatRoomService
 {
 	constructor(private userServ : UserService,
 		@InjectRepository(chatRoom) private RoomRepository: Repository<chatRoom>,
 		@InjectRepository(User) private usersRepository: Repository<User>,
+		private messageServ : roomMessageService,
 		private readonly jwtService: JwtService
 	){}
 
@@ -88,6 +92,11 @@ export class chatRoomService
 		// console.log(room);
 		await room.save()
 	}
+	async deleteRoom(roomId : number)
+	{
+		await this.RoomRepository.delete({id : roomId})
+		await this.messageServ.deleteMessagesRoom(roomId)
+	}
 
 	async deleteUser(roomId : number, userToDelete : string)
 	{
@@ -109,6 +118,11 @@ export class chatRoomService
 				if(room.members[index].userName === room.RoomOwner) 
 					room.RoomOwner = room.members[0].userName
 				room.members.splice(index,1)
+			}
+			if(room.members.length === 0)
+			{
+				this.deleteRoom(room.id)
+				return 
 			}
 			console.log("=========================\n===============")
 			console.log(room.members)

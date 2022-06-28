@@ -34,4 +34,9 @@ export class roomMessageService
 		let messages = await this.RoomRepository.findBy({roomId : roomId})
 		return messages
 	}
+
+	async deleteMessagesRoom(roomId : number)
+	{
+		await this.RoomRepository.delete({roomId : roomId})
+	}
 }
