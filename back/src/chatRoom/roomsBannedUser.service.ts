@@ -18,7 +18,7 @@ export class roomBannedUserService
         ){}
         
         
-    async muteUser(userName : string , roomId : number , periode : number , periodeType : string)
+    async muteUser(userName : string , roomId : number , periode : number )
     {
         let muteUser : roomBannedUser = await this.banRoomRepository.create()
         
@@ -26,16 +26,14 @@ export class roomBannedUserService
         muteUser.roomId = roomId
         muteUser.banType =  "mute"
         var time : Date = new Date()
-        if(periodeType === "hour")
-            muteUser.unBanTime = new Date(time.getTime() + (periode * 60 * 60000))
-        else if(periodeType === "min")
            muteUser.unBanTime = new Date(time.getTime() + (periode  * 60000))
-        
         await muteUser.save()
     }
 
     async getBannedUserByRoomId(roomId : number)
     {
-        await this.banRoomRepository.findBy({roomId : roomId})
+        let user : roomBannedUser[] = await this.banRoomRepository.findBy({roomId : roomId})
+        console.log(typeof (user[0].unBanTime))
+       return await this.banRoomRepository.findBy({roomId : roomId})
     }
 }

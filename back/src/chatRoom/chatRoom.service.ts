@@ -121,6 +121,7 @@ export class chatRoomService
 			}
 			if(room.members.length === 0)
 			{
+				console.log("im In delete Room")
 				this.deleteRoom(room.id)
 				return 
 			}
