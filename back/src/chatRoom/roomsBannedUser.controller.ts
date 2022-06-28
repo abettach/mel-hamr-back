@@ -17,7 +17,6 @@ export class roomBannedUsersController {
 	@UseGuards(JwtAuthGuard)
     async muteUser(@Body() data : any)
     {
-        console.log(data)
         await this.roomBannedUserServ.muteUser(data.userName, data.roomId, data.periode)
     }
 
@@ -26,5 +25,12 @@ export class roomBannedUsersController {
     async getBannedUserByRoomId(@Body() data : any)
     {
        return await this.roomBannedUserServ.getBannedUserByRoomId(data.roomId)
+    }
+
+    @Post("unbanUser")
+	@UseGuards(JwtAuthGuard)
+    async unbanUser(@Body() data : any)
+    {
+       return await this.roomBannedUserServ.unbanUser(data.userName,data.roomId)
     }
 }
