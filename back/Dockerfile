@@ -1,4 +1,3 @@
-# Image source
 FROM node:10-alpine
 
 # Docker working directory

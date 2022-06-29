@@ -32,7 +32,7 @@ export class friendsService {
       );
       ret.push({ userName: element.userName, picture: image[0]?.picture });
     }
-    // console.log(ret);
+    console.log(ret);
     return ret;
   }
 
@@ -52,7 +52,7 @@ export class friendsService {
       );
       // const NotFriend = await this.userRepo.query(`select * from public."FriendShip" WHERE public."FriendShip"."sender_id" = '${sender}' AND public."FriendShip"."recipent_id" = '${recipent}'`);
 
-      // console.log(user, ' sender', sender, ' recipent', recipent);
+      console.log(user, ' sender', sender, ' recipent', recipent);
       if (invExistInbase.length == 0) await this.friendShipRepo.save(val);
     }
   }
@@ -77,7 +77,7 @@ export class friendsService {
         );
       }
       if (user.length != 0) {
-        // console.log(user);
+        console.log(user);
         await this.friendShipRepo.delete(val);
       }
     }
@@ -150,7 +150,7 @@ export class friendsService {
     (select "userName" FROM public."FriendBlocked" WHERE public."FriendBlocked"."userId" = '${userId}') \
     `);
     
-    // console.log('--->', userName);
+    console.log('--->', userName);
     const all_users = await this.userRepo
       .query(`select public."Users"."userName", public."Users"."picture"  FROM public."Users" \
 		WHERE  public."Users"."userName" NOT IN (select "userName" FROM public."FriendBlocked" WHERE public."FriendBlocked"."userId" = '${userId}' OR public."FriendBlocked"."Blocker" = '${userName}') \
@@ -198,7 +198,7 @@ export class friendsService {
     if (!pending && !friend)
       pending = await this.friendShipRepo.findOneBy({ recipent_id: userName });
     if (pending && !friend) obj.pending = 'true';
-    // console.log(obj);
+    console.log(obj);
     return obj;
   }
 }

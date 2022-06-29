@@ -1,17 +1,12 @@
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-42';
 // import { UserDto } from "src/dto-classes/user.dto";
 import { sign, verify } from 'jsonwebtoken';
-
 import { config } from 'dotenv';
-
-import { HttpException, HttpStatus, Injectable, Res } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserDto } from 'src/dto-classes/user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import { RefreshToken } from '../entities/refresh-token.entity';
-import { response } from 'express';
 
 config();
 @Injectable()
@@ -111,7 +106,15 @@ export class AuthService {
 
     // console.log(exist.isTwoFactorAuthenticationEnabled);
     if (exist && exist.isTwoFactorAuthenticationEnabled === true) return 1;
-    else if (exist) return 2;
+    else if (exist)
+    {
+      if (exist.ifUserName)
+      {
+        // for picture
+        return 3;
+      }
+      return 2;
+    } 
     return 0;
   }
 
@@ -146,7 +149,6 @@ export class AuthService {
       await this.usersRepository.save(userDto);
       // }
     }
-    console.log('id : ', req.user);
     //  insert into "Users" (id,"firstName","lastName", "userName","email") values (9,'ftest', 'lname', 'username', 'etest');
     // const iser = await this.usersRepository.query(`insert into Users 'winner_user,"loser_user","Score","played_at" from "Games" where winner_user='amouhtal' or loser_user='amouhtal'`);
     // let info = this.newRefreshAndAccessToken(userDto, values)

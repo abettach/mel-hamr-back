@@ -17,7 +17,6 @@ import RefreshTokenDto from '../dto-classes/refresh-token.dto';
 import { Ft42AuthGuard } from '../guards/ft42.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.gguard';
 
-
 @Controller('auth/42')
 export class AuthController {
   constructor(
@@ -37,6 +36,7 @@ export class AuthController {
     @Res() response: Response,
     @Ip() ip,
   ) {
+    console.log(req.user);
     try {
       let info: any = await this.authService.Login(req, response, {
         ipAddress: ip,
@@ -52,13 +52,13 @@ export class AuthController {
       // if (ip == '::ffff:10.12.11.5') {
       if (ret == 1)
         response.redirect(
-          `http://localhost:3000/authentication?token=${info.refAcc.accessToken}&refreshToken=${info.refAcc.refreshToken}`,
+          `http://10.13.3.4:3000/authentication?token=${info.refAcc.accessToken}&refreshToken=${info.refAcc.refreshToken}`,
         );
       else if (ret == 2)
         response.redirect(
-          `http://localhost:3000/home?token=${info.refAcc.accessToken}&refreshToken=${info.refAcc.refreshToken}`,
+          `http://10.13.3.4:3000/home?token=${info.refAcc.accessToken}&refreshToken=${info.refAcc.refreshToken}`,
         );
-      else response.redirect(`http://localhost:3000`);
+      else response.redirect(`http://10.13.3.4:3000`);
       // } else {
       //   if (ret == 1)
       //   response.redirect(
@@ -76,6 +76,13 @@ export class AuthController {
       console.log(e);
     }
   }
+
+  // @Get('callback')
+  // @UseGuards(Ft42AuthGuard)
+  // async funnn(@Req() req, a : Response) {
+  //   console.log('req.user');
+  //   // a.redirect('www.google.com')
+  // }
 
   @Get('refresh')
   // @UseGuards(JwtAuthGuard)

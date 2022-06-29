@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload) {
-    // console.log('--------------11----------', payload.userId);
+    console.log('--------------11----------', payload.userId);
 
     let token = await this.tokenRepository.findOneBy({ email: payload.userId });
     if (token) {
