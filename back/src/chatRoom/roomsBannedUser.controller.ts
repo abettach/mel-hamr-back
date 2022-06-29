@@ -20,13 +20,19 @@ export class roomBannedUsersController {
         await this.roomBannedUserServ.muteUser(data.userName, data.roomId, data.periode)
     }
 
+    @Post("getMutedUserByRoomId")
+	@UseGuards(JwtAuthGuard)
+    async getMutedUserByRoomId(@Body() data : any)
+    {
+       return await this.roomBannedUserServ.getMutedUserByRoomId(data.roomId)
+    }
+
     @Post("getBannedUserByRoomId")
 	@UseGuards(JwtAuthGuard)
     async getBannedUserByRoomId(@Body() data : any)
     {
        return await this.roomBannedUserServ.getBannedUserByRoomId(data.roomId)
     }
-
     @Post("unbanUser")
 	@UseGuards(JwtAuthGuard)
     async unbanUser(@Body() data : any)

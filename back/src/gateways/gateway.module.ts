@@ -4,6 +4,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { chatRoomModule } from "src/chatRoom/chatRoom.module";
 import { chatRoomService } from "src/chatRoom/chatRoom.service";
 import { roomMessageService } from "src/chatRoom/roomMessage.service";
+import { roomBannedUserService } from "src/chatRoom/roomsBannedUser.service";
 import { chatRoom } from "src/entities/chatRoom.entity";
 import { FriendLsit } from "src/entities/friendList.entity";
 import { FriendShip } from "src/entities/friendShip.entity";
@@ -12,6 +13,7 @@ import { liveGame } from "src/entities/liveGame.entity";
 import { messages } from "src/entities/message.entity";
 import { Notification } from "src/entities/notification.entity";
 import { roomMessage } from "src/entities/roomMessage.entity";
+import { roomBannedUser } from "src/entities/roomsBannedUser.entity";
 import { User } from "src/entities/user.entity";
 import { gameModule } from "src/games/game.module";
 import { GamesService } from "src/games/game.service";
@@ -29,11 +31,11 @@ import  gamePlayService  from "./gamePlay.service";
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User,messages,roomMessage,Games,liveGame, chatRoom,Notification]), 
+    imports: [TypeOrmModule.forFeature([User,messages,roomMessage,Games,liveGame, chatRoom,Notification,roomBannedUser]), 
     JwtModule.register({ secret: 'bda1843e3fa6f42e528dd2ec9f088a1d4b181d525faa9caaf65c9b3ca978ef54' }),MessageModule,chatRoomModule,gameModule,NotificationModule],
     // JwtModule.register({ secret: 'bda1843e3fa6f42e528dd2ec9f088a1d4b181d525faa9caaf65c9b3ca978ef54' }),MessageModule,chatRoomModule,gameModule],
     controllers: [messageController], 
-    providers: [chatGateway, UserService,messageService ,liveGameService,roomMessageService,GamesService, chatRoomService,notificationService,gamePlayService]
+    providers: [chatGateway, UserService,messageService ,liveGameService,roomMessageService,GamesService, chatRoomService,notificationService,gamePlayService,roomBannedUserService]
     // providers: [chatGateway, UserService,messageService ,liveGameService,roomMessageService,GamesService, chatRoomService]
 })
 

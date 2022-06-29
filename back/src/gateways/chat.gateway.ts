@@ -8,6 +8,7 @@ import { EMPTY } from "rxjs";
 import { Socket } from "socket.io";
 import { chatRoomService } from "src/chatRoom/chatRoom.service";
 import { roomMessageService } from "src/chatRoom/roomMessage.service";
+import { roomBannedUserService } from "src/chatRoom/roomsBannedUser.service";
 import { GamesDto } from "src/dto-classes/game.dto";
 import { LiveGameDto } from "src/dto-classes/liveGame.dto";
 import { messageDto } from "src/dto-classes/message.dtp";
@@ -50,6 +51,7 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 	private chatRoomServ : chatRoomService ,
 	private readonly jwtService: JwtService,
 	private gameServ : GamesService,
+	private  roomBannedUserServ: roomBannedUserService ,
 	private notifServ : notificationService)
 	{
 	}
@@ -445,6 +447,57 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 		}
 		console.log("--------------------------------")
 	}
+/////////////////////////////////////////////
+@SubscribeMessage('muteUser')
+	async muteUser(client : Socket , data: any)
+	{
+		console.log("------muteUser----------")
+		let auth_token = client.handshake.auth.Authorization;
+		if(auth_token !== "null" && auth_token !== "undefined" && auth_token)
+		{
+			const tokenInfo : any = this.jwtService.decode(auth_token);
+			let userInfo = await this.usersRepository.query(`select "userName" from public."Users" WHERE public."Users".email = '${tokenInfo.userId}'`);
+			if(Object.keys(userInfo).length !== 0)
+			{
+				let muteUserInfo :any = await this.roomBannedUserServ.muteUser(data.userName, data.roomId, data.periode)
+				let recvSockts : Socket[] = sockets.get(data.userName);
+				if(muteUserInfo !== "null")
+				{
+					for(let sock of recvSockts)
+					{
+						console.log("mel-hamra Hmaaaaaarr")
+						sock.emit("mutedUser", muteUserInfo)
+					}
+				}
+			}
+		}
+		console.log("--------------------------------")
+	}
 
+
+	@SubscribeMessage('banUser')
+	async banUser(client : Socket , data: any)
+	{
+		console.log("------banUser----------")
+		let auth_token = client.handshake.auth.Authorization;
+		if(auth_token !== "null" && auth_token !== "undefined" && auth_token)
+		{
+			const tokenInfo : any = this.jwtService.decode(auth_token);
+			let userInfo = await this.usersRepository.query(`select "userName" from public."Users" WHERE public."Users".email = '${tokenInfo.userId}'`);
+			if(Object.keys(userInfo).length !== 0)
+			{
+				let muteUserInfo :any = await this.roomBannedUserServ.banUser(data.userName, data.roomId)
+				let recvSockts : Socket[] = sockets.get(data.userName);
+				if(muteUserInfo !== "null")
+				{
+					for(let sock of recvSockts)
+					{
+						sock.leave(data.roomId)
+					}
+				}
+			}
+		}
+		console.log("--------------------------------")
+	}
 
 }
