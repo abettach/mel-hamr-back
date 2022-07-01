@@ -12,5 +12,5 @@ RUN npm install
 # Copy current directory to APP folder
 COPY . /app/
 
-EXPOSE 3000
-CMD ["npm", "run", "start:dev"]
+EXPOSE 3001
+# CMD ["npm", "run", "start:dev"]

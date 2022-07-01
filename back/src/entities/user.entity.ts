@@ -60,4 +60,6 @@ export class User {
   @JoinTable({name : 'chatIntUser'})
   chatRooms : chatRoom[] 
 
+  @ManyToMany( () => chatRoom , (room) => room.id)
+  adminsRoom : chatRoom[] 
 }

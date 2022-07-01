@@ -22,15 +22,15 @@ export class chatRoomService
 	async createRoom(owner : string , data : any)
 	{
 		console.log("data=",data);
-		let userName = owner
-		let user = await this.usersRepository.findOneBy({userName : userName})
-		let room : chatRoom = await this.RoomRepository.create({ RoomOwner : userName })
+		let user = await this.usersRepository.findOneBy({userName : owner})
+		let room : chatRoom = await this.RoomRepository.create({ RoomOwner : owner })
 		room.members = [user]
 		room.RoomOwner = owner
 		console.log(data.name)
 		room.name = data.name
 		room.type = data.type
 		room.protected = data.protected
+		room.Administrators = [user]
 		if(room.protected == true)
 		room.password = data.password
 		if(data.users !== undefined)

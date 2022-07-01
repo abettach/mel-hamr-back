@@ -12,10 +12,8 @@ import { TwoFactorAuthenticationService } from "../twofactor/twoFactorAuthentica
 
 
 @Module({
-    imports: [UserModule,TypeOrmModule.forFeature([RefreshToken]),
-    TypeOrmModule.forFeature([User]),
+    imports: [UserModule,TypeOrmModule.forFeature([RefreshToken, User]),
     ],
-    
     providers: [AuthService, JwtStrategy, TwoFactorAuthenticationService, FtAuthStrategy],
     controllers: [AuthController]
 })

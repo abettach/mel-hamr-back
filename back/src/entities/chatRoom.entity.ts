@@ -30,4 +30,8 @@ export class chatRoom extends BaseEntity
     @ManyToMany(() => User , (user) => user.userName)
     @JoinTable({name : 'chatIntUser'})
     members : User[]
+    
+    @ManyToMany(() => User , (user) => user.userName)
+    @JoinTable({name : 'administrators'})
+    Administrators : User[]
 }

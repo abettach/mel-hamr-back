@@ -45,7 +45,7 @@ export class uploadController {
     };
     const jwt = request.headers.authorization.replace('Bearer ', '');
     let user: User = await this.userService.getUserJwt(jwt);
-    let root = 'http://10.12.11.3:3000/upload/' + response.filename;
+    let root = 'http://localhost:3000/upload/' + response.filename;
     await this.userRepo
       .createQueryBuilder('Users')
       .update('User')

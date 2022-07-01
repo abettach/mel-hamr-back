@@ -12,8 +12,7 @@ import { friendsService } from "./friends.service";
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([FriendLsit]),TypeOrmModule.forFeature([FriendShip]),TypeOrmModule.forFeature([User]), 
-    JwtModule.register({ secret: 'bda1843e3fa6f42e528dd2ec9f088a1d4b181d525faa9caaf65c9b3ca978ef54' })],
+    imports: [TypeOrmModule.forFeature([FriendLsit, FriendShip, User])],
     controllers: [FriendsController], 
     providers: [friendsService, UserService]
 })
