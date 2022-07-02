@@ -11,7 +11,7 @@ import { uploadController } from "./file-uploading.controller";
     imports: [
     MulterModule.register({
         dest: './files',
-      }), TypeOrmModule.forFeature([User])],
+      }), TypeOrmModule.forFeature([User]),JwtModule.register({ secret: 'bda1843e3fa6f42e528dd2ec9f088a1d4b181d525faa9caaf65c9b3ca978ef54' })],
     controllers: [uploadController], 
     providers: [UserService]
 })

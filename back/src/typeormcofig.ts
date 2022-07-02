@@ -15,7 +15,7 @@ import { roomBannedUser } from './entities/roomsBannedUser.entity';
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
-  host: 'db',
+  host: 'localhost',
   port: 5432,
   username: 'postgres',
   password: 'postgres',
