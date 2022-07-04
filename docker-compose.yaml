@@ -24,9 +24,9 @@ services:
       - "5050:80"
   backend:
     build:
-      context: .
+      context: ./back
       dockerfile: Dockerfile
-    image: tusharchy/nest-and-postgres-application:latest
+    # image: tusharchy/nest-and-postgres-application:latest
     environment:
       - DB_TYPE=postgres
       - POSTGRES_HOST=db
@@ -45,8 +45,25 @@ services:
       - db
       - pgadmin
     volumes:
-      - .:/app
+      - ./back:/app
       - /app/node_modules
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #   - 8080:8080
+  #   networks:
+  #     - backend
+  #   volumes:
+  #    - ./frontend:/app
+  #   env_file:
+  #     - ./env/front.env
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - backend
+
   # adminer:
   #   image: adminer
   #   ports:
