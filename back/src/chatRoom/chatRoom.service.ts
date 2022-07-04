@@ -9,6 +9,10 @@ import { UserService } from "src/user/user.service";
 import { roomMessage } from "src/entities/roomMessage.entity";
 import { messageService } from "src/messages/message.service";
 import { roomMessageService } from "./roomMessage.service";
+import * as bcrypt from 'bcrypt';
+import { retry } from "rxjs";
+
+
 @Injectable()
 export class chatRoomService
 {
@@ -32,7 +36,11 @@ export class chatRoomService
 		room.protected = data.protected
 		room.Administrators = [user]
 		if(room.protected == true)
-		room.password = data.password
+		{
+			const saltOrRounds = 10;
+			const hash = await bcrypt.hash(data.password, saltOrRounds);
+			room.password = hash
+		}
 		if(data.users !== undefined)
 		{
 			for(let us of data.users)
@@ -158,5 +166,24 @@ export class chatRoomService
 
 		room.Administrators =[...room.Administrators,user]
 		await room.save();
+	}
+	async changeRoomPassword(roomId : number , newPassword : string)
+	{
+		let room : chatRoom  = await this.getRoomById(roomId)
+		const saltOrRounds = 10;
+		const hash = await bcrypt.hash(newPassword, saltOrRounds);
+		room.password = hash
+		await room.save()
+	}
+	async changeRoomName(roomId : number , newName : string)
+	{
+		let room : chatRoom  = await this.getRoomById(roomId)
+		room.name = newName
+		await room.save()
+	}
+	async checkPassword(roomId : number , password : string)
+	{
+		let room : chatRoom = await this.getRoomById(roomId)
+		return  await bcrypt.compare(password,room.password);
 	}
 }

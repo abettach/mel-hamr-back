@@ -559,4 +559,33 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 		console.log("--------------------------------")
 	}
 
+	@SubscribeMessage('changeUserName')
+    async changeUserName(client : Socket , data: any)
+    {
+        console.log("------changeUserName----------")
+        let auth_token = client.handshake.auth.Authorization;
+        if(auth_token !== "null" && auth_token !== "undefined" && auth_token)
+        {
+            const tokenInfo : any = this.jwtService.decode(auth_token);
+            let userInfo = await this.usersRepository.query(`select "userName" from public."Users" WHERE public."Users".email = '${tokenInfo.userId}'`);
+            if(Object.keys(userInfo).length !== 0)
+            {
+				let newMap : Map<string,Array<Socket>> = new Map()
+                for (let [key, value] of sockets) {
+					if(key == userInfo[0].userName)
+                    {
+						newMap.set(data.userName,value)
+                    }
+					else
+					newMap.set(key,value)
+                }
+				// sockets=newMap
+                // for (let [key, value] of sockets) {
+                //     console.log("key: " ,key, "  value: " ,value[0].id )
+                // }
+				this.messageServ.changeName(userInfo[0].userName,data.userName)
+            }
+        }
+        console.log("--------------------------------")
+    } 
 }

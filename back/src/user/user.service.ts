@@ -81,22 +81,25 @@ export class UserService {
     return await this.usersRepository.query(`select * from Users`);
   }
 
-  async findUser(request: ExampleDto, email: string): Promise<boolean> {
+  async findUser(request: ExampleDto, userr: User): Promise<boolean> {
     const user = await this.usersRepository
-      .createQueryBuilder()
-      .select('user')
-      .from(User, 'user')
-      .where('user.userName = :name', { name: request.userName })
-      .getOne();
-
+    .createQueryBuilder()
+    .select('user')
+    .from(User, 'user')
+    .where('user.userName = :name', { name: request.userName })
+    .getOne();
+      
     if (user == null) {
+      await this.updateUsername(request.userName,userr.userName);
       await this.usersRepository
         .createQueryBuilder()
         .update(User)
         .set({ userName: request.userName })
+        // .set({ifUserName: true})
         // .set({ picture: request.imageName })
-        .where('email = :email', { email: email })
+        .where('email = :email', { email: userr.email })
         .execute();
+
     }
     if (user == null) {
       return true;
@@ -109,7 +112,7 @@ export class UserService {
       var get = await this.usersRepository.query(`UPDATE public."Users" SET "isActive"= '${stats}' WHERE  "userName"= '${userName}'`)
       // var get = await this.userRep.query(`SELECT id, "senderId", "reciverId", message FROM public.messages WHERE "senderId" = '${SId}' and "reciverId" = '${RId}'`)
   }
-  
+
   async findByemail(email: string): Promise<User> {
     return this.usersRepository.findOneBy({ email: email });
   }
@@ -117,11 +120,12 @@ export class UserService {
   public async getUserJwt(token: string) : Promise<User>{
     const tokenInfo: any = this.jwtService.decode(token);
 
-    let user = await this.usersRepository
-      .createQueryBuilder('Users')
-      .select(['Users.userName'])
-      .where('Users.email = :email', { email: tokenInfo.userId })
-      .getOne();
+    let user = await this.usersRepository.findOneBy({email : tokenInfo.userId});
+      // .createQueryBuilder('Users').
+      // .select(['Users.userName'], ['Users.email'])
+      // .where('Users.email = :email', { email: tokenInfo.userId })
+      // .getOne();
+      console.log("mail : ", user);
 
     if (user) return user;
   }
@@ -129,6 +133,22 @@ export class UserService {
     return await this.usersRepository.findOneBy({ userName: userName });
   }
 
+
+  public async updateUsername(newName: string, oldName: string)
+  {
+    await this.usersRepository.query(`UPDATE public."FriendBlocked" SET "Blocker"='${newName}' WHERE "Blocker"='${oldName}'`);
+    await this.usersRepository.query(`UPDATE public."FriendBlocked" SET "Blocked"='${newName}' WHERE "Blocked"='${oldName}'`);
+    // await this.usersRepository.query(`UPDATE public."FriendBlocked" SET "Blocked"='${newName}' WHERE "Blocked"='${oldName}'`);
+    // friends
+    await this.usersRepository.query(`UPDATE public."FriendLsit" SET "userName"='${newName}' WHERE "userName"='${oldName}'`);
+    // invitations
+    await this.usersRepository.query(`UPDATE public."FriendShip" SET "sender_id"='${newName}' WHERE "sender_id"='${oldName}'`);
+    await this.usersRepository.query(`UPDATE public."FriendShip" SET "recipent_id"='${newName}' WHERE "recipent_id"='${oldName}'`);
+    // games
+    await this.usersRepository.query(`UPDATE public."Games" SET "winner_user"='${newName}' WHERE "winner_user"='${oldName}'`);
+    await this.usersRepository.query(`UPDATE public."Games" SET "loser_user"='${newName}' WHERE "loser_user"='${oldName}'`);
+    
+  }
 }
 
 // public async create(user : User) {

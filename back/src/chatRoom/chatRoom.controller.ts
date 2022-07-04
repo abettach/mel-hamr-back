@@ -140,6 +140,24 @@ export class chatRoomController {
 	{
 		return await this.RoomService.getRoomById(body.roomId)
 	}
+	@Post('changeRoomPassword')
+	@UseGuards(JwtAuthGuard)
+	async changeRoomPassword(@Body() body :any)
+	{
+		return await this.RoomService.changeRoomPassword(body.roomId,body.newPassword)
+	}
+	@Post('changeRoomName')
+	@UseGuards(JwtAuthGuard)
+	async changeRoomName(@Body() body :any)
+	{
+		return await this.RoomService.changeRoomName(body.roomId,body.newName)
+	}
+	@Post('checkPassword')
+	@UseGuards(JwtAuthGuard)
+	async checkPassword(@Body() body :any)
+	{
+		return await this.RoomService.checkPassword(body.roomId,body.password)
+	}
 }
 /* 
 SELECT *
