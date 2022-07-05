@@ -47,19 +47,22 @@ export class messageService {
     async changeName(oldUserName : string, newUserName : string)
     {
         // var messages : messages[] = await this.messageRep.update({where :{ senderId : oldUserName , reciverId  : oldUserName }})
-        var messages : messages[] = await this.messageRep.find({
-            where: [
-                { senderId: oldUserName },
-                { reciverId: oldUserName }
-            ]
-          })
-        for(let msg of messages)
-        {
-            if(msg.reciverId == oldUserName)
-                msg.reciverId = newUserName
-            if(msg.senderId == oldUserName)
-                msg.senderId = newUserName
-            await msg.save()
-        }
+        // var messages : messages[] = await this.messageRep.find({
+        //     where: [
+        //         { senderId: oldUserName },
+        //         { reciverId: oldUserName }
+        //     ]
+        //   })
+        // for(let msg of messages)
+        // {
+        //     if(msg.reciverId == oldUserName)
+        //         msg.reciverId = newUserName
+        //     if(msg.senderId == oldUserName)
+        //         msg.senderId = newUserName
+        //     await msg.save()
+        // }
+        await this.messageRep.query(`UPDATE public."messages" SET "senderId"='${newUserName}' WHERE "senderId"='${oldUserName}'`);
+        await this.messageRep.query(`UPDATE public."messages" SET "reciverId"='${newUserName}' WHERE "reciverId"='${oldUserName}'`);
+        
     }
 }

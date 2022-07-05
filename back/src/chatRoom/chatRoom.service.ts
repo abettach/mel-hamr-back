@@ -186,4 +186,8 @@ export class chatRoomService
 		let room : chatRoom = await this.getRoomById(roomId)
 		return  await bcrypt.compare(password,room.password);
 	}
+	async changeName(oldUserName : string, newUserName : string)
+    {
+        await this.RoomRepository.query(`UPDATE public."chat" SET "RoomOwner"='${newUserName}' WHERE "RoomOwner"='${oldUserName}'`);
+    }
 }

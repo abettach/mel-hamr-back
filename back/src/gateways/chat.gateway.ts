@@ -201,14 +201,20 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 				var senderSock : Socket[] = [];
 				var reciverSock : Socket[] = [];
 				senderSock = sockets.get(data.senderId);
-				for(let ids of senderSock)
+				if(senderSock !== null && senderSock !== undefined)
 				{
-					ids.emit("message",conversation)
+					for(let ids of senderSock)
+					{
+						ids.emit("message",conversation)
+					}
 				}
 				reciverSock = sockets.get(data.reciverId);
-				for(let ids of reciverSock)
+				if(reciverSock !== null && reciverSock !== undefined)
 				{
-					ids.emit("message",conversation)
+					for(let ids of reciverSock)
+					{
+						ids.emit("message",conversation)
+					}
 				}
 			}
 		}
@@ -557,7 +563,7 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
 			}
 		}
 		console.log("--------------------------------")
-	}
+	} 
 
 	@SubscribeMessage('changeUserName')
     async changeUserName(client : Socket , data: any)
@@ -570,20 +576,28 @@ export class chatGateway implements OnGatewayConnection , OnGatewayDisconnect {
             let userInfo = await this.usersRepository.query(`select "userName" from public."Users" WHERE public."Users".email = '${tokenInfo.userId}'`);
             if(Object.keys(userInfo).length !== 0)
             {
-				let newMap : Map<string,Array<Socket>> = new Map()
-                for (let [key, value] of sockets) {
-					if(key == userInfo[0].userName)
-                    {
-						newMap.set(data.userName,value)
-                    }
-					else
-					newMap.set(key,value)
-                }
-				// sockets=newMap
-                // for (let [key, value] of sockets) {
-                //     console.log("key: " ,key, "  value: " ,value[0].id )
-                // }
-				this.messageServ.changeName(userInfo[0].userName,data.userName)
+				if((await this.userServ.findUser(userInfo[0].userName,data.userName,userInfo[0].email)) === true)
+				{
+					let newMap : Map<string,Array<Socket>> = new Map()
+					for (let [key, value] of sockets) {
+						if(key == userInfo[0].userName)
+						{
+							newMap.set(data.userName,value)
+						}
+						else
+						newMap.set(key,value)
+					}
+					sockets=newMap
+					console.log(data)
+					for (let [key, value] of sockets) {
+					    console.log("key: " ,key, "  value: " ,value[0].id )
+					}
+					this.messageServ.changeName(userInfo[0].userName,data.userName)
+					this.chatRoomServ.changeName(userInfo[0].userName,data.userName)
+					this.roomMessageServ.changeName(userInfo[0].userName,data.userName)
+					this.roomBannedUserServ.changeName(userInfo[0].userName,data.userName)
+					this.notifServ.changeName(userInfo[0].userName,data.userName)
+				}
             }
         }
         console.log("--------------------------------")
